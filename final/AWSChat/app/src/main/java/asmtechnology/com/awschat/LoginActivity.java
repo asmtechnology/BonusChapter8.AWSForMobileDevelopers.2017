@@ -38,8 +38,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
+import asmtechnology.com.awschat.controllers.AnalyticsController;
 import asmtechnology.com.awschat.controllers.CognitoIdentityPoolController;
 import asmtechnology.com.awschat.controllers.CognitoUserPoolController;
 import asmtechnology.com.awschat.interfaces.CognitoIdentityPoolControllerGenericHandler;
@@ -100,6 +102,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             startService(intent);
         }
 
+        // send an analytics event
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        Map<String, String> eventData = new HashMap<String, String>();
+        eventData.put("name", "Login");
+
+        analyticsController.postCustomEvent("Screen Loaded", eventData);
     }
 
 
@@ -214,6 +222,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void attemptLogin() {
+
+        // send an analytics event
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        Map<String, String> eventData = new HashMap<String, String>();
+        eventData.put("action", "Login");
+
+        analyticsController.postCustomEvent("Button tapped", eventData);
+
         // Reset errors.
         mUsernameView.setError(null);
         mPasswordView.setError(null);
@@ -260,6 +276,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private void displaySuccessMessage() {
 
+        // send an analytics event
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        analyticsController.postCustomEvent("Login Success", null);
+
         final Context context = this;
 
         runOnUiThread(new Runnable() {
@@ -286,6 +306,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void displayErrorMessage(final Exception exception) {
+
+        // send an analytics event
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        Map<String, String> eventData = new HashMap<String, String>();
+        eventData.put("type", "Exception");
+        eventData.put("message", exception.getMessage());
+
+        analyticsController.postCustomEvent("Login Error", eventData);
 
         final Context context = this;
 
@@ -314,6 +342,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void displayErrorMessage(final String title, final String message) {
+
+        // send an analytics event
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        Map<String, String> eventData = new HashMap<String, String>();
+        eventData.put("type", title);
+        eventData.put("message", message);
+
+        analyticsController.postCustomEvent("Login Error", eventData);
 
         final Context context = this;
 
@@ -427,5 +463,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
         displayErrorMessage("Error", connectionResult.getErrorMessage());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        analyticsController.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        AnalyticsController analyticsController = AnalyticsController.getInstance(this);
+        analyticsController.onResume();
     }
 }
