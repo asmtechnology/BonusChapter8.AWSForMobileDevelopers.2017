@@ -13,8 +13,9 @@ import java.util.Map;
 
 public class AnalyticsController {
 
-    private String identityPoolD = "us-east-1:74034201-e8f6-454e-a7e0-52b428bff06b";
-    private String appID = "994e34638d084c04860b5976da50b5c4";
+    //TO DO: Insert your Mobile Analytics settings here
+    private String identityPoolD = "your mobile analytics identity pool id";
+    private String appID = "your mobile analytics app id";
 
     private MobileAnalyticsManager analytics = null;
 
